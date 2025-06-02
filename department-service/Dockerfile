@@ -1,4 +1,3 @@
-# Sử dụng image JDK 17 chính thức
 FROM openjdk:21-jdk
 
 # Tạo thư mục ứng dụng trong container

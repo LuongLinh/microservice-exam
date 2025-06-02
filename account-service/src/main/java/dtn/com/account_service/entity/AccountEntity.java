@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "accounts")
+@Table(name = "account")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,9 +19,9 @@ public class AccountEntity {
     @Column(name = "username")
     private String username;
 
-    @Column(name = "first_name")
+    @Column(name = "firstname")
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "lastname")
     private String lastName;
 }
