@@ -8,6 +8,7 @@ import dtn.com.auth_service.dto.response.RegisterResponse;
 //import dtn.com.auth_service.model.Role;
 
 //
+import dtn.com.auth_service.model.Role;
 import dtn.com.auth_service.model.User;
 import dtn.com.auth_service.repository.UserRepository;
 import jakarta.validation.ConstraintViolationException;
@@ -31,7 +32,7 @@ public class AuthenticationService {
 
     private final UserRepository userRepository;
 //    private final JwtService jwtService;
-    private final AuthenticationManager authenTicationManager;
+//    private final AuthenticationManager authenTicationManager;
     private final PasswordEncoder passwordEncoder;
 
     public RegisterResponse register(RegisterRequest registerRequest) {
@@ -60,86 +61,6 @@ public class AuthenticationService {
         return RegisterResponse.builder()
                 .status(HttpStatus.OK.value())
                 .message("User created")
-                .build();
-    }
-
-    public AuthenticationResponse login(LoginRequest loginRequest) {
-        //Authenticate username and password
-        log.info("User request body login:");
-        log.info("Login request dto: {}", loginRequest);
-        String username = loginRequest.getUsername();
-        String password = loginRequest.getPassword();
-        authenTicationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-
-        //Generate access token and refresh token
-        Optional<User> userFoundByUsername = userRepository.findByUsername(loginRequest.getUsername());
-        if (userFoundByUsername.isPresent()) {
-            User user = userFoundByUsername.get();
-            String accessToken = jwtService.generateAccessToken(user);
-            String refreshToken = jwtService.generateRefreshToken(user);
-
-            //Save access token and refresh token into user in database
-            user.setAccessToken(accessToken);
-            user.setRefreshToken(refreshToken);
-            userRepository.save(user);
-
-            //Response access token and refresh token to client
-            return AuthenticationResponse.builder()
-                    .accessToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .userId(user.getId())
-                    .message("Login successfully")
-                    .status(HttpStatus.OK.value())
-                    .build();
-        } else {
-            return AuthenticationResponse.builder()
-                    .message("Login failed")
-                    .status(HttpStatus.FORBIDDEN.value())
-                    .build();
-        }
-    }
-
-    public AuthenticationResponse refreshToken(String authHeader) throws ValidationException {
-        if (authHeader == null || !authHeader.startsWith("Bearer")) {
-            return AuthenticationResponse.builder()
-                    .status(HttpStatus.UNAUTHORIZED.value())
-                    .message("Unauthorized!")
-                    .build();
-        }
-
-        String refreshToken = authHeader.substring(TOKEN_INDEX);
-
-        //Get userName from refreshToken
-        String userName = jwtService.extractUsername(refreshToken);
-        if (!StringUtils.hasText(userName)) {
-            throw new ValidationException(HttpStatus.INTERNAL_SERVER_ERROR, "Username is empty");
-        }
-
-        //Get User's data from database
-        Optional<User> userFoundByUsername = userRepository.findByUsername(userName);
-        if (userFoundByUsername.isEmpty()) {
-            throw new UsernameNotFoundException(userName);
-        }
-
-        User user = userFoundByUsername.get();
-        if (!StringUtils.hasText(user.getAccessToken()) || !StringUtils.hasText(user.getRefreshToken())) {
-            throw new ValidationException(HttpStatus.UNAUTHORIZED, "Token of the user revoked");
-        }
-
-        //Generate access token and refresh token
-        String accessToken = jwtService.generateAccessToken(user);
-        String newRefreshToken = jwtService.generateRefreshToken(user);
-        user.setAccessToken(accessToken);
-        user.setRefreshToken(newRefreshToken);
-        userRepository.save(user);
-
-        //Response access token and refresh token to client
-        return AuthenticationResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .userId(user.getId())
-                .message("Refresh token successfully")
-                .status(HttpStatus.OK.value())
                 .build();
     }
 }

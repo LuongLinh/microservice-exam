@@ -1,9 +1,9 @@
 package dtn.com.auth_service.model;
 
 public enum Role {
-    ROLE_USER,
-    ROLE_ADMIN,
-    ROLE_MODERATOR;
+    USER,
+    ADMIN,
+    MODERATOR;
 
     public static Role toEnum(String role) {
         for (Role item : Role.values()) {
