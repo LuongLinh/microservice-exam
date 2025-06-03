@@ -27,4 +27,52 @@ public class RegisterRequest {
     @NotNull(message = "Role can not be null")
     @Pattern(regexp = "ADMIN|MANAGER|USER", message = "The role must be ADMIN, MANAGER or USER")
     private String role;
+
+    public @NotEmpty(message = "Username must not be empty") String getUsername() {
+        return username;
+    }
+
+    public void setUsername(@NotEmpty(message = "Username must not be empty") String username) {
+        this.username = username;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public @Email(message = "Malformed email") @NotNull(message = "Email must not be null") String getEmail() {
+        return email;
+    }
+
+    public void setEmail(@Email(message = "Malformed email") @NotNull(message = "Email must not be null") String email) {
+        this.email = email;
+    }
+
+    public @NotNull(message = "Password must not be null") String getPassword() {
+        return password;
+    }
+
+    public void setPassword(@NotNull(message = "Password must not be null") String password) {
+        this.password = password;
+    }
+
+    public @NotNull(message = "Role can not be null") @Pattern(regexp = "ADMIN|MANAGER|USER", message = "The role must be ADMIN, MANAGER or USER") String getRole() {
+        return role;
+    }
+
+    public void setRole(@NotNull(message = "Role can not be null") @Pattern(regexp = "ADMIN|MANAGER|USER", message = "The role must be ADMIN, MANAGER or USER") String role) {
+        this.role = role;
+    }
 }
