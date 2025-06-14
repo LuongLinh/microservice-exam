@@ -1,0 +1,25 @@
+name: Java App CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Docker Compose build and run
+        run: |
+          docker compose down
+          docker compose build
+          docker compose up -d
+
+      - name: Start AuthService Application
+        run: |
+          cd auth-service
+          ./gradlew bootRun &
